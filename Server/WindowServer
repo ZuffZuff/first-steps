@@ -1,0 +1,56 @@
+package Server;
+
+import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.LinkedList;
+
+public class WindowServer {
+    public static LinkedList<ThreadForClient> serverList = new LinkedList<>();
+    //public static final int PORT = 4004;
+
+    //private static Socket clientSocket; //сокет для общения
+    //private static ServerSocket server; // серверсокет
+    //private static BufferedReader in; // поток чтения из сокета
+    //public static BufferedWriter out; // поток записи в сокет
+
+
+    public static void main(String[] args) {
+        WindowServerFrame greatFrame = new WindowServerFrame();
+        greatFrame.init();
+            try {
+                //server = new ServerSocket(4004);
+                ServerSocket server = new ServerSocket(200);// серверсокет прослушивает порт 4004
+                greatFrame.chatArea.setText("Сервер запущен!" +"\n");
+                //System.out.println("Сервер запущен!");
+                //clientSocket = server.accept();
+
+                // теперь мы можем принимать сообщения
+                try {
+
+                    while (true){
+                        Socket clientSocket = server.accept();
+                        try {
+                            serverList.add(new ThreadForClient(clientSocket, greatFrame)); // добавить новое соединенние в список
+                        } catch (IOException e) {
+                            // Если завершится неудачей, закрывается сокет,
+                            // в противном случае, нить закроет его при завершении работы:
+                            clientSocket.close();
+                        }
+                    }
+                } finally {
+
+
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                System.out.println("Сервер закрыт!");
+                //server.close();
+            }
+
+
+
+
+    }
+}
