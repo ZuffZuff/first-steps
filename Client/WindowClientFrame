@@ -1,0 +1,80 @@
+package Client;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+
+public class WindowClientFrame extends JFrame {
+    JButton eraseButton = new JButton("Send Massege");
+    JButton renameButton = new JButton("User rename");
+    JTextArea chatArea = new JTextArea();
+    JTextField fieldWriteMassage = new JTextField();
+    JTextField fieldRename = new JTextField();
+    JLabel userName = new JLabel("User");
+
+
+
+
+
+    public void init(){
+        this.setSize(600, 600);
+        this.setTitle("MyChatClient");
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setLayout(null);
+
+        renameButton.setBounds(5,5, 100,20);
+        renameButton.addActionListener(new RenameButtonListener());
+
+        eraseButton.setBounds(465, 535, 100, 20);
+        eraseButton.addActionListener(new SendButtonListener());
+
+        fieldWriteMassage.setBounds(5,535, 455, 20);
+
+        fieldRename.setBounds(110, 5, 200,20);
+
+        userName.setBounds(315, 5, 240, 20);
+
+        chatArea.setBounds(5,30, 560, 480);
+        chatArea.setEditable(false);
+        chatArea.setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
+
+        this.add(chatArea);
+        this.add(eraseButton);
+        this.add(renameButton);
+        this.add(fieldWriteMassage);
+        this.add(fieldRename);
+        this.add(userName);
+
+        this.setVisible(true);
+        this.setLocationRelativeTo(null);
+    }
+
+    public class SendButtonListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent pressButton) {
+            WindowClient.word = fieldWriteMassage.getText();
+            if(!WindowClient.word.equals("")){
+                try {
+                    WindowClient.out.write(userName.getText() + " said: " + WindowClient.word + "\n");
+                    WindowClient.out.flush();
+                    WindowClient.word = "";
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            fieldWriteMassage.setText(null);
+        }
+    }
+
+    public class RenameButtonListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent pressButton) {
+            userName.setText(fieldRename.getText());
+            fieldRename.setText(null);
+        }
+    }
+}
