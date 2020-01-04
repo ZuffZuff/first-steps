@@ -1,0 +1,55 @@
+package Server;
+
+
+
+import java.io.*;
+import java.net.Socket;
+
+public class ThreadForClient extends Thread {
+    public WindowServerFrame greatFrame;
+    private Socket socket; // сокет, через который сервер общается с клиентом,
+    private BufferedReader in; // поток чтения из сокета
+    private BufferedWriter out; // поток записи в сокет
+
+    public ThreadForClient(Socket socket, WindowServerFrame greatFrame) throws IOException {
+        this.greatFrame = greatFrame;
+        this.socket = socket;
+
+        in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+        start(); // вызываем run()
+    }
+    @Override
+    public void run() {
+        String word;
+        try {
+
+            while (true) {
+                word = in.readLine();
+                greatFrame.chatArea.append(word +"\n");
+                if(word.equals("stop")) {
+                    break;                }
+                for (ThreadForClient vr : WindowServer.serverList) {
+                    vr.send(word); // отослать принятое сообщение с
+                    // привязанного клиента всем остальным включая его
+                }
+            }
+
+        } catch (IOException e) {
+        }
+    }
+
+    private void send(String msg) {
+        try {
+            out.write(msg + "\n");
+            out.flush();
+        } catch (IOException ignored) {}
+    }
+
+    public void erase() {
+        try {
+            out.write("1qr54uipgh89" + "\n");
+            out.flush();
+        } catch (IOException ignored) {}
+    }
+}
