@@ -1,0 +1,51 @@
+package Server;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class WindowServerFrame extends JFrame {
+    JButton eraseButton = new JButton("Erase...");
+    JTextArea chatArea = new JTextArea();
+
+    public static String jarPath = WindowServer.class.getProtectionDomain().getCodeSource().getLocation().getPath()
+            .replaceAll("/", "\\\\").substring(1);
+
+
+
+    public void init(){
+        this.setSize(600, 600);
+        this.setTitle("MyChatServer");
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setLayout(null);
+
+
+        eraseButton.setBounds(5, 535, 560, 20);
+        eraseButton.addActionListener(new EraseButtonListener());
+        ImageIcon icon = new ImageIcon(WindowServerFrame.jarPath + "icons\\eraser18.png");
+        eraseButton.setIcon(icon);
+
+        chatArea.setBounds(5,5, 560, 520);
+        chatArea.setEditable(false);
+        chatArea.setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
+        chatArea.setText("Ожидание...\n");
+
+        this.add(chatArea);
+        this.add(eraseButton);
+
+        this.setVisible(true);
+        this.setLocationRelativeTo(null);
+    }
+
+    public class EraseButtonListener implements ActionListener{
+
+        @Override
+        public void actionPerformed(ActionEvent pressButton) {
+            chatArea.setText("Clearrrrrrrr" + "\n");
+            for (ThreadForClient vr : WindowServer.serverList) {
+                vr.erase();
+            }
+        }
+    }
+}
