@@ -1,0 +1,62 @@
+package Client;
+
+import java.io.*;
+import java.net.Socket;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class WindowClient {
+    private static Socket clientSocket;
+    private static BufferedReader in; // поток чтения из сокета
+    public static BufferedWriter out; // поток записи в сокет
+    public static String word = "";
+    public static String serverWord = "";
+
+    public static void main(String[] args) {
+        WindowClientFrame wcf = new WindowClientFrame();
+        wcf.init();
+
+        try {
+            try {
+
+                //clientSocket = new Socket("localhost", 4004);
+                //clientSocket = new Socket("192.168.43.139", 4004);
+                clientSocket = new Socket("192.168.1.195", 4004);
+
+                in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                // писать туда же
+                out = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
+
+                while(true){
+                    if(WindowClient.serverWord.equals("")){
+                        try {
+
+                            WindowClient.serverWord = WindowClient.in.readLine();
+                            if(WindowClient.serverWord.equals("1qr54uipgh89")){
+                                wcf.chatArea.setText("(" + new SimpleDateFormat().format(new Date()) + ")" + "Clearrrrrrrr" + "\n");
+                                WindowClient.serverWord="";
+                            }else{
+                                wcf.chatArea.append(WindowClient.serverWord + "\n");
+                                WindowClient.serverWord="";
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            break;
+                        }
+
+                    }else continue;
+                }
+
+            } finally {
+                wcf.chatArea.append("Соединение не установлено");
+                //System.out.println("Клиент был закрыт...");
+                clientSocket.close();
+                in.close();
+                out.close();
+            }
+        } catch (IOException e) {
+            System.err.println(e);
+        }
+    }
+
+}
